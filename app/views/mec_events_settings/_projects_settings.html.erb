@@ -6,30 +6,18 @@
 <%= error_messages_for 'event_configuration' %>
 
 <div class="box tabular">
-
-<table>
-  <tbody>
-    <tr>
-      <th><%= l(:event_tracker) %></th>
-      <td>
-        <%= select_tag 'event_configuration[event_tracker_id]', options_from_collection_for_select(@project.trackers, "id", "name", @event_configuration.event_tracker_id), :include_blank => true %>
-      </td>
-    </tr>
-    <tr>
-      <th><%= l(:participation_tracker) %></th>
-      <td>
-        <%= select_tag 'event_configuration[participation_tracker_id]', options_from_collection_for_select(@project.trackers, "id", "name", @event_configuration.participation_tracker_id), :include_blank => true %>
-      </td>
-    </tr>
-    <tr>
-      <th><%= l(:custom_field_participants) %></th>
-      <td>
-        <%= select_tag 'event_configuration[custom_field_participants_id]', options_from_collection_for_select(@project.issue_custom_fields.where(:field_format => "user"), "id", "name", @event_configuration.custom_field_participants_id), :include_blank => true %>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
+<p>
+  <%= label_tag('event_configuration[event_tracker_id]', l(:event_tracker)) %>
+  <%= select_tag 'event_configuration[event_tracker_id]', options_from_collection_for_select(@project.trackers, "id", "name", @event_configuration.event_tracker_id), :include_blank => true %>
+</p>
+<p>
+  <%= label_tag('event_configuration[participation_tracker_id]', l(:participation_tracker)) %>
+  <%= select_tag 'event_configuration[participation_tracker_id]', options_from_collection_for_select(@project.trackers, "id", "name", @event_configuration.participation_tracker_id), :include_blank => true %>
+</p>
+<p>
+  <%= label_tag('event_configuration[custom_field_participants_id]', l(:custom_field_participants)) %>
+  <%= select_tag 'event_configuration[custom_field_participants_id]', options_from_collection_for_select(@project.issue_custom_fields.where(:field_format => "user"), "id", "name", @event_configuration.custom_field_participants_id), :include_blank => true %>
+</p>
 </div>
 
 <div class="contextual">
