@@ -1,5 +1,6 @@
 # English strings go here for Rails i18n
 en:
-  event_tracker: "Event Tracker"
-  participation_tracker: "Participation Tracker"
+  event_tracker: "Tracker for event type"
+  participation_tracker: "Tracker for participation type"
   events: "Events"
+  custom_field_participants: "Custom field for participants"

@@ -21,6 +21,12 @@
         <%= select_tag 'event_configuration[participation_tracker_id]', options_from_collection_for_select(@project.trackers, "id", "name", @event_configuration.participation_tracker_id), :include_blank => true %>
       </td>
     </tr>
+    <tr>
+      <th><%= l(:custom_field_participants) %></th>
+      <td>
+        <%= select_tag 'event_configuration[custom_field_participants_id]', options_from_collection_for_select(@project.issue_custom_fields.where(:field_format => "user"), "id", "name", @event_configuration.custom_field_participants_id), :include_blank => true %>
+      </td>
+    </tr>
   </tbody>
 </table>
 
