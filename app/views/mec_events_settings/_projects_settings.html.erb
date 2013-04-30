@@ -10,15 +10,15 @@
 <table>
   <tbody>
     <tr>
-      <th><%= l(:event_issue_category) %></th>
+      <th><%= l(:event_tracker) %></th>
       <td>
-        <%= select_tag 'event_configuration[event_issue_category_id]', options_from_collection_for_select(@project.issue_categories, "id", "name", @event_configuration.event_issue_category_id), :include_blank => true %>
+        <%= select_tag 'event_configuration[event_tracker_id]', options_from_collection_for_select(@project.trackers, "id", "name", @event_configuration.event_tracker_id), :include_blank => true %>
       </td>
     </tr>
     <tr>
-      <th><%= l(:participation_issue_category) %></th>
+      <th><%= l(:participation_tracker) %></th>
       <td>
-        <%= select_tag 'event_configuration[participation_issue_category_id]', options_from_collection_for_select(@project.issue_categories, "id", "name", @event_configuration.participation_issue_category_id), :include_blank => true %>
+        <%= select_tag 'event_configuration[participation_tracker_id]', options_from_collection_for_select(@project.trackers, "id", "name", @event_configuration.participation_tracker_id), :include_blank => true %>
       </td>
     </tr>
   </tbody>
