@@ -14,13 +14,17 @@ Redmine::Plugin.register :mec_events do
 
 
   project_module :events do
-    permission :manage_events, :events => :manage
+    permission :manage_event_configuration, :event_configuration => [:edit]
   end
 
 
   ActionDispatch::Callbacks.to_prepare do 
     unless ProjectsHelper.included_modules.include?(ProjectsHelperPatch)
         ProjectsHelper.send(:include, ProjectsHelperPatch)
+    end
+
+    unless ProjectsController.included_modules.include?(ProjectsControllerPatch)
+        ProjectsController.send(:include, ProjectsControllerPatch)
     end
   end
 

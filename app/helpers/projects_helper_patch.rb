@@ -19,7 +19,7 @@ module ProjectsHelperPatch
         def project_settings_tabs_with_mec_events
             tabs = project_settings_tabs_without_mec_events
             tabs.push({ :name => 'events',
-                        :action => :manage_wiki,
+                        :action => :manage_event_configuration,
                         :partial => 'mec_events_settings/projects_settings',
                         :label => :events})
             return tabs

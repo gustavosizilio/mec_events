@@ -1,2 +1,34 @@
-Just a test2...
+<%= labelled_form_for @event_configuration,
+                   :as => :event_configuration,
+                   :url => { :controller => 'event_configuration', :action => 'edit', :id => @project },
+                   :remote => true, :method => 'post' do |f| %>
 
+<%= error_messages_for 'event_configuration' %>
+
+<div class="box tabular">
+
+<table>
+  <tbody>
+    <tr>
+      <th><%= l(:event_issue_category) %></th>
+      <td>
+        <%= select_tag 'event_configuration[event_issue_category_id]', options_from_collection_for_select(@project.issue_categories, "id", "name", @event_configuration.event_issue_category_id), :include_blank => true %>
+      </td>
+    </tr>
+    <tr>
+      <th><%= l(:participation_issue_category) %></th>
+      <td>
+        <%= select_tag 'event_configuration[participation_issue_category_id]', options_from_collection_for_select(@project.issue_categories, "id", "name", @event_configuration.participation_issue_category_id), :include_blank => true %>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+
+<div class="contextual">
+
+</div>
+
+<%= submit_tag((@event_configuration.nil? || @event_configuration.new_record?) ? l(:button_create) : l(:button_save)) %>
+<% end %>
