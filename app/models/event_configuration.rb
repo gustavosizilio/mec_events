@@ -10,4 +10,9 @@ class EventConfiguration < ActiveRecord::Base
     'project_id',
     'custom_field_participants_id'
 
+  def self.tracker? issue
+    @event_configuration = EventConfiguration.where(:project_id => issue.project.id).last
+    return false if @event_configuration.nil?
+    return @event_configuration.event_tracker_id == issue.tracker.id;
+  end
 end

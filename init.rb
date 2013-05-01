@@ -1,5 +1,6 @@
 #encoding: utf-8
-#require 'dispatcher'
+
+require_dependency 'mec_events_hook_view_listener'
 
 Redmine::Plugin.register :mec_events do
   name 'Mec Events plugin'
@@ -15,6 +16,7 @@ Redmine::Plugin.register :mec_events do
 
   project_module :events do
     permission :manage_event_configuration, :event_configuration => [:edit]
+    permission :send_invitations, :events => [:send_invitations]
   end
 
 
