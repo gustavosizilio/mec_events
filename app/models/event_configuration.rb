@@ -86,4 +86,9 @@ class EventConfiguration < ActiveRecord::Base
     end
     @participants
   end
+
+
+  def self.verify_participation_confirmation_limit
+    `echo AAAAAAAAAAAAAAAAAAAAAAAAAAAAAHAUHSUHSAUHSUAHUSHUAHSU >> /home/gustavo/test2.txt`
+  end
 end
