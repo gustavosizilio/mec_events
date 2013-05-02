@@ -5,3 +5,5 @@ en:
   events: "Events"
   custom_field_participants: "Custom field for participants"
   send_invitations: "Send invitations"
+  participantion_subject_template: "Participation subject template"
+  placeholders: "Placeholders"

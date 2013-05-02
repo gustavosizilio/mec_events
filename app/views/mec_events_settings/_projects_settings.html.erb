@@ -18,6 +18,11 @@
   <%= label_tag('event_configuration[custom_field_participants_id]', l(:custom_field_participants)) %>
   <%= select_tag 'event_configuration[custom_field_participants_id]', options_from_collection_for_select(@project.issue_custom_fields.where(:field_format => "user"), "id", "name", @event_configuration.custom_field_participants_id), :include_blank => true %>
 </p>
+<p>
+  <%= label_tag('event_configuration[participation_subject_template]', l(:participantion_subject_template)) %>
+  <%= text_field_tag 'event_configuration[participation_subject_template]', @event_configuration.participation_subject_template, :size => 150 %>
+  <br/><em><%= l(:placeholders) %>: <%= EventConfiguration::EVENT_SUBJECT_PLACEHOLDER %></em>
+</p>
 </div>
 
 <div class="contextual">

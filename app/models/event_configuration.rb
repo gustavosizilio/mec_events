@@ -8,7 +8,47 @@ class EventConfiguration < ActiveRecord::Base
   safe_attributes 'event_tracker_id',
     'participation_tracker_id',
     'project_id',
-    'custom_field_participants_id'
+    'custom_field_participants_id',
+    'participation_subject_template'
+
+  EVENT_SUBJECT_PLACEHOLDER = "{%event_subject%}"
+
+  def build_subject issue
+    self.participation_subject_template.gsub EVENT_SUBJECT_PLACEHOLDER, issue.subject if self.participation_subject_template
+  end
+  
+  def self.create_participants issue
+    @errors = []
+    event_configuration = EventConfiguration.find_by_issue(issue)
+    EventConfiguration.get_participants(issue).each do |user|
+      principal = Principal.find(user.id)
+      new_issue = Issue.where(:parent_id => issue, :assigned_to_id => principal, :tracker_id => event_configuration.participation_tracker).first
+      new_issue ||= Issue.new
+
+      if new_issue.new_record? 
+        new_issue.parent_issue_id = issue.id
+        new_issue.author = Principal.find(User.current.id)
+        new_issue.assigned_to_id = principal.id
+        new_issue.project = issue.project
+
+        new_issue.subject = event_configuration.build_subject(issue)
+
+
+
+
+
+        new_issue.tracker = event_configuration.participation_tracker
+      end
+      if new_issue.save
+        #TO-DO...
+      else
+        puts new_issue.errors.full_messages
+        #TO-DO catch errors
+        @errors << new_issue.errors.full_messages
+      end
+    end
+    @errors
+  end
 
   def self.find_by_issue issue
     EventConfiguration.where(:project_id => issue.project.id).last
@@ -20,6 +60,7 @@ class EventConfiguration < ActiveRecord::Base
     return @event_configuration.event_tracker_id == issue.tracker.id;
   end
 
+  #TODO TIRAR DO SELF
   def self.get_participants issue
     @participants = []
     @event_configuration = EventConfiguration.where(:project_id => issue.project.id).last
