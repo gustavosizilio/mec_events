@@ -29,6 +29,4 @@ Redmine::Plugin.register :mec_events do
         ProjectsController.send(:include, ProjectsControllerPatch)
     end
   end
-  
-  `cd #{File.dirname(__FILE__)} && whenever --update-crontab mec_events`
 end
