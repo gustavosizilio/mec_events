@@ -20,7 +20,7 @@ class EventConfiguration < ActiveRecord::Base
   def self.create_participants issue
     @errors = []
     event_configuration = EventConfiguration.find_by_issue(issue)
-    EventConfiguration.get_participants(issue).each do |user|
+    event_configuration.get_participants(issue).each do |user|
       principal = Principal.find(user.id)
       new_issue = Issue.where(:parent_id => issue, :assigned_to_id => principal, :tracker_id => event_configuration.participation_tracker).first
       new_issue ||= Issue.new
@@ -61,14 +61,12 @@ class EventConfiguration < ActiveRecord::Base
   end
 
   #TODO TIRAR DO SELF
-  def self.get_participants issue
+  def get_participants issue
     @participants = []
-    @event_configuration = EventConfiguration.where(:project_id => issue.project.id).last
-    return @participants if @event_configuration.nil?
     
-    if(issue.available_custom_fields.include?(@event_configuration.custom_field_participants))
+    if(issue.available_custom_fields.include?(self.custom_field_participants))
       @custom_field_participants_value = issue.custom_field_values.select { |cv|
-        cv.custom_field_id == @event_configuration.custom_field_participants_id
+        cv.custom_field_id == self.custom_field_participants_id
       }[0]
 
       unless(@custom_field_participants_value.nil?)
