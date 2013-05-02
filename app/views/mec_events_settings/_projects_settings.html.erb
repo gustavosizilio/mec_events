@@ -23,6 +23,10 @@
   <%= text_field_tag 'event_configuration[participation_subject_template]', @event_configuration.participation_subject_template, :size => 150 %>
   <br/><em><%= l(:placeholders) %>: <%= EventConfiguration::EVENT_SUBJECT_PLACEHOLDER %></em>
 </p>
+<p>
+  <%= label_tag('event_configuration[custom_field_require_participation_confirmation_id]', l(:custom_field_require_participation_confirmation)) %>
+  <%= select_tag 'event_configuration[custom_field_require_participation_confirmation_id]', options_from_collection_for_select(@project.issue_custom_fields.where(:field_format => "bool"), "id", "name", @event_configuration.custom_field_require_participation_confirmation_id), :include_blank => true %>
+</p>
 </div>
 
 <div class="contextual">

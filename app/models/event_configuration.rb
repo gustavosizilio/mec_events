@@ -3,13 +3,15 @@ class EventConfiguration < ActiveRecord::Base
   belongs_to :event_tracker, :class_name => Tracker
   belongs_to :participation_tracker, :class_name => Tracker
   belongs_to :custom_field_participants, :class_name => IssueCustomField
+  belongs_to :custom_field_require_participation_confirmation, :class_name => IssueCustomField
   belongs_to :project
 
   safe_attributes 'event_tracker_id',
     'participation_tracker_id',
     'project_id',
     'custom_field_participants_id',
-    'participation_subject_template'
+    'participation_subject_template',
+    'custom_field_require_participation_confirmation_id'
 
   EVENT_SUBJECT_PLACEHOLDER = "{%event_subject%}"
 
@@ -30,13 +32,7 @@ class EventConfiguration < ActiveRecord::Base
         new_issue.author = Principal.find(User.current.id)
         new_issue.assigned_to_id = principal.id
         new_issue.project = issue.project
-
         new_issue.subject = event_configuration.build_subject(issue)
-
-
-
-
-
         new_issue.tracker = event_configuration.participation_tracker
       end
       if new_issue.save
@@ -54,13 +50,26 @@ class EventConfiguration < ActiveRecord::Base
     EventConfiguration.where(:project_id => issue.project.id).last
   end
 
+  def self.require_confirmation? issue
+    @event_configuration = EventConfiguration.where(:project_id => issue.project.id).last
+    return false if @event_configuration.nil?
+
+    if(issue.available_custom_fields.include?(@event_configuration.custom_field_require_participation_confirmation))
+      @require_confirmation_value = issue.custom_field_values.select { |cv|
+        cv.custom_field_id == @event_configuration.custom_field_require_participation_confirmation_id
+      }[0]
+      return @require_confirmation_value.value == '1'
+    end
+      
+    return false
+  end
+
   def self.tracker? issue
     @event_configuration = EventConfiguration.where(:project_id => issue.project.id).last
     return false if @event_configuration.nil?
     return @event_configuration.event_tracker_id == issue.tracker.id;
   end
 
-  #TODO TIRAR DO SELF
   def get_participants issue
     @participants = []
     

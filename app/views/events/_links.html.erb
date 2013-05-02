@@ -1,0 +1,18 @@
+<% if EventConfiguration.tracker? @issue %>
+<div class="event-links">
+  <% content_for :header_tags do %>
+      <%= stylesheet_link_tag 'events', :plugin => 'mec_events' %>
+  <% end %>
+
+<% if EventConfiguration.require_confirmation?(@issue) %>
+    <%= link_to(l(:send_invitations),
+                {:controller => 'events', :action => 'new_invitations_with_confirmation', :project_id => @issue.project, :id => @issue.id},
+                :remote => true,
+                :method => 'get',
+                :class => 'highlight-link') if User.current.allowed_to?(:send_invitations, @project) %>
+<% else %>
+  <%= link_to(l(:send_invitations), send_invitations_path(@issue.id), :method => :post, :class => 'highlight-link') if User.current.allowed_to?(:send_invitations, @project) %>
+<% end %>
+
+</div>
+<% end %>

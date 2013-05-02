@@ -1,0 +1,3 @@
+$('#ajax-modal').html('<%= escape_javascript(render :partial => 'events/new_invitations_with_confirmation', :locals => {:issue => @issue}) %>');
+showModal('ajax-modal', '450px');
+$('#ajax-modal').addClass('new-watcher');

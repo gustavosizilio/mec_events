@@ -7,3 +7,5 @@ en:
   send_invitations: "Send invitations"
   participantion_subject_template: "Participation subject template"
   placeholders: "Placeholders"
+  custom_field_require_participation_confirmation: "Custom fields for require participation confirmation"
+  participation_confirmation_limit: "Participation confirmation limit"
