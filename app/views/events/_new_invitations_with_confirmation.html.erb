@@ -7,9 +7,9 @@
              :method => :post}) do %>
 <div class="box tabular">
   <p>
-  <%= label_tag 'participation_confirmation_limit', l(:participation_confirmation_limit) %>: <%= text_field_tag 'participation_confirmation_limit', nil %>
+  <%= label_tag 'issue[participation_confirmation_limit]', l(:participation_confirmation_limit) %>: <%= text_field_tag 'issue[participation_confirmation_limit]', nil %>
 
-  <%= calendar_for('participation_confirmation_limit') %>
+  <%= calendar_for('issue_participation_confirmation_limit') %>
   </p>
 </div>
 

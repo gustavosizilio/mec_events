@@ -6,7 +6,7 @@ class EventsController < ApplicationController
   end
 
   def send_invitations
-    @errors = EventConfiguration.create_participants @issue
+    @errors = EventConfiguration.create_participants @issue, params
     redirect_to issue_path(@issue)
   end
 end
