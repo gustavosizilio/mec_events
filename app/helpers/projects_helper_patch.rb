@@ -21,7 +21,7 @@ module ProjectsHelperPatch
             tabs.push({ :name => 'events',
                         :action => :manage_event_configuration,
                         :partial => 'mec_events_settings/projects_settings',
-                        :label => :events})
+                        :label => :events}) if User.current.allowed_to?(:manage_event_configuration, @project)
             return tabs
         end
 
