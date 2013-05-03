@@ -1,3 +1,4 @@
+#TODO validations...
 class EventConfiguration < ActiveRecord::Base
   include Redmine::SafeAttributes  
   belongs_to :event_tracker, :class_name => Tracker
@@ -6,6 +7,7 @@ class EventConfiguration < ActiveRecord::Base
   belongs_to :custom_field_require_participation_confirmation, :class_name => IssueCustomField
   belongs_to :custom_field_participation_confirmation_limit, :class_name => IssueCustomField
   belongs_to :participation_start_status, :class_name => IssueStatus
+  belongs_to :participation_expired_confirmation_status, :class_name => IssueStatus
 
   belongs_to :project
 
@@ -16,7 +18,8 @@ class EventConfiguration < ActiveRecord::Base
     'participation_subject_template',
     'custom_field_require_participation_confirmation_id',
     'custom_field_participation_confirmation_limit_id',
-    'participation_start_status_id'
+    'participation_start_status_id',
+    'participation_expired_confirmation_status_id'
 
   EVENT_SUBJECT_PLACEHOLDER = "{%event_subject%}"
 
@@ -107,6 +110,17 @@ class EventConfiguration < ActiveRecord::Base
 
 
   def self.verify_participation_confirmation_limit
-    `echo AAAAAAAAAAAAAAAAAAAAAAAAAAAAAHAUHSUHSAUHSUAHUSHUAHSU >> /home/gustavo/test2.txt`
+    ec_with_confirmation = EventConfiguration.where('custom_field_require_participation_confirmation_id > 0')
+    ec_with_confirmation.each do |ec|
+      Issue.where(:tracker_id => ec.participation_tracker_id, :project_id => ec.project_id, :status_id => ec.participation_start_status_id )
+      .joins('LEFT OUTER JOIN issues father ON father.id = issues.parent_id')
+      .joins('LEFT OUTER JOIN custom_values father_custom_values ON father_custom_values.customized_id = father.id')
+      .where("father_custom_values.custom_field_id=#{ec.custom_field_require_participation_confirmation_id}")
+      .where("father_custom_values.value = '1' ")
+      .joins('LEFT OUTER JOIN custom_values ON custom_values.customized_id = issues.id')
+      .where("custom_values.custom_field_id=#{ec.custom_field_participation_confirmation_limit_id}")
+      .where("custom_values.value < '#{DateTime.now.strftime("%F")}' ")
+      .update_all(["issues.status_id=?", ec.participation_expired_confirmation_status_id])
+    end
   end
 end
