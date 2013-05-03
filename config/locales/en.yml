@@ -12,3 +12,4 @@ en:
   custom_field_participation_confirmation_limit: "Custom field participation confirmation limit"
   need_enabled_on_participation_tracker: "This field must be enabled on selected tracker for participation type"
   need_enabled_on_event_tracker: "This field must be enabled on selected tracker for event type"
+  participation_start_status: "Start status of participation"

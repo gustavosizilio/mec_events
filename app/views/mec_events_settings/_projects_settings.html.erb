@@ -12,12 +12,16 @@
 </p>
 <p>
   <%= label_tag('event_configuration[participation_tracker_id]', l(:participation_tracker)) %>
-  <%= select_tag 'event_configuration[participation_tracker_id]', options_from_collection_for_select(@project.trackers, "id", "name", @event_configuration.participation_tracker_id), :include_blank => true %>
+  <%= select_tag 'event_configuration[participation_tracker_id]', options_from_collection_for_select(@project.trackers, "id", "name", @event_configuration.participation_tracker_id), :include_blank => true, :onchange=>"$('#edit_event_configuration').submit()" %>
 </p>
+
+<% unless @event_configuration.participation_tracker.nil? %>
 <p>
-  <%= label_tag('event_configuration[participation_start_state_id]', l(:participation_tracker)) %>
-  <%= select_tag 'event_configuration[participation_start_state_id]', options_from_collection_for_select(@project.trackers, "id", "name", @event_configuration.participation_start_state_id), :include_blank => true %>
+  <%= label_tag('event_configuration[participation_start_status_id]', l(:participation_start_status)) %>
+  <%= select_tag 'event_configuration[participation_start_status_id]', options_from_collection_for_select(@event_configuration.participation_tracker.issue_statuses, "id", "name", @event_configuration.participation_start_status_id), :include_blank => true %>
 </p>
+<% end %>
+
 <p>
   <%= label_tag('event_configuration[custom_field_participants_id]', l(:custom_field_participants)) %>
   <%= select_tag 'event_configuration[custom_field_participants_id]', options_from_collection_for_select(@project.issue_custom_fields.where(:field_format => "user"), "id", "name", @event_configuration.custom_field_participants_id), :include_blank => true %>
@@ -30,14 +34,18 @@
 </p>
 <p>
   <%= label_tag('event_configuration[custom_field_require_participation_confirmation_id]', l(:custom_field_require_participation_confirmation)) %>
-  <%= select_tag 'event_configuration[custom_field_require_participation_confirmation_id]', options_from_collection_for_select(@project.issue_custom_fields.where(:field_format => "bool"), "id", "name", @event_configuration.custom_field_require_participation_confirmation_id), :include_blank => true %>
+  <%= select_tag 'event_configuration[custom_field_require_participation_confirmation_id]', options_from_collection_for_select(@project.issue_custom_fields.where(:field_format => "bool"), "id", "name", @event_configuration.custom_field_require_participation_confirmation_id), :include_blank => true, :onchange=>"$('#edit_event_configuration').submit()" %>
   <br/><em><%= l(:need_enabled_on_event_tracker) %>
 </p>
+
+<% if @event_configuration.custom_field_require_participation_confirmation_id %>
 <p>
   <%= label_tag('event_configuration[custom_field_participation_confirmation_limit_id]', l(:custom_field_participation_confirmation_limit)) %>
   <%= select_tag 'event_configuration[custom_field_participation_confirmation_limit_id]', options_from_collection_for_select(@project.issue_custom_fields.where(:field_format => "date"), "id", "name", @event_configuration.custom_field_participation_confirmation_limit_id), :include_blank => true %>
   <br/><em><%= l(:need_enabled_on_participation_tracker) %>
 </p>
+<% end %>
+
 </div>
 
 <div class="contextual">

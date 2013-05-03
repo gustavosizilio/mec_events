@@ -5,6 +5,7 @@ class EventConfiguration < ActiveRecord::Base
   belongs_to :custom_field_participants, :class_name => IssueCustomField
   belongs_to :custom_field_require_participation_confirmation, :class_name => IssueCustomField
   belongs_to :custom_field_participation_confirmation_limit, :class_name => IssueCustomField
+  belongs_to :participation_start_status, :class_name => IssueStatus
 
   belongs_to :project
 
@@ -14,7 +15,8 @@ class EventConfiguration < ActiveRecord::Base
     'custom_field_participants_id',
     'participation_subject_template',
     'custom_field_require_participation_confirmation_id',
-    'custom_field_participation_confirmation_limit_id'
+    'custom_field_participation_confirmation_limit_id',
+    'participation_start_status_id'
 
   EVENT_SUBJECT_PLACEHOLDER = "{%event_subject%}"
 
@@ -23,9 +25,6 @@ class EventConfiguration < ActiveRecord::Base
   end
   
   def self.create_participants issue, params
-    puts "AAAAAAAAAAAAAAAAAAAAA"    
-    #puts params[:issue][:participation_confirmation_limit]
-  
     @errors = []
     event_configuration = EventConfiguration.find_by_issue(issue)
     event_configuration.get_participants(issue).each do |user|
@@ -43,6 +42,7 @@ class EventConfiguration < ActiveRecord::Base
         new_issue.project = issue.project
         new_issue.subject = event_configuration.build_subject(issue)
         new_issue.tracker = event_configuration.participation_tracker
+        new_issue.status_id = event_configuration.participation_start_status_id
         if params[:issue] && params[:issue][:participation_confirmation_limit]
            cv_confirmation_limit = CustomValue.new(:custom_field_id => event_configuration.custom_field_participation_confirmation_limit_id, :customized => new_issue, :value => params[:issue][:participation_confirmation_limit])
            new_issue.custom_values.push(cv_confirmation_limit) 
