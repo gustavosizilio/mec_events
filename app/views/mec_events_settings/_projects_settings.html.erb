@@ -21,8 +21,12 @@
   <%= select_tag 'event_configuration[participation_start_status_id]', options_from_collection_for_select(@event_configuration.participation_tracker.issue_statuses, "id", "name", @event_configuration.participation_start_status_id), :include_blank => true %>
 </p>
 <p>
-  <%= label_tag('event_configuration[participation_expired_confirmation_status_id]', l(:participation_start_status)) %>
+  <%= label_tag('event_configuration[participation_expired_confirmation_status_id]', l(:participation_expired_status)) %>
   <%= select_tag 'event_configuration[participation_expired_confirmation_status_id]', options_from_collection_for_select(@event_configuration.participation_tracker.issue_statuses, "id", "name", @event_configuration.participation_expired_confirmation_status_id), :include_blank => true %>
+</p>
+<p>
+  <%= label_tag('event_configuration[participation_confirmed_status_id]', l(:participation_confirmed_status)) %>
+  <%= select_tag 'event_configuration[participation_confirmed_status_id]', options_from_collection_for_select(@event_configuration.participation_tracker.issue_statuses, "id", "name", @event_configuration.participation_confirmed_status_id), :include_blank => true %>
 </p>
 <% end %>
 

@@ -17,6 +17,7 @@ Redmine::Plugin.register :mec_events do
   project_module :events do
     permission :manage_event_configuration, :event_configuration => [:edit]
     permission :send_invitations, :events => [:send_invitations, :new_invitations_with_confirmation]
+    permission :confirm_invitation, :events => [:confirm_invitation]
   end
 
 

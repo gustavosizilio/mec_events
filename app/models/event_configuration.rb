@@ -8,6 +8,7 @@ class EventConfiguration < ActiveRecord::Base
   belongs_to :custom_field_participation_confirmation_limit, :class_name => IssueCustomField
   belongs_to :participation_start_status, :class_name => IssueStatus
   belongs_to :participation_expired_confirmation_status, :class_name => IssueStatus
+  belongs_to :participation_confirmed_status, :class_name => IssueStatus
 
   belongs_to :project
 
@@ -19,7 +20,8 @@ class EventConfiguration < ActiveRecord::Base
     'custom_field_require_participation_confirmation_id',
     'custom_field_participation_confirmation_limit_id',
     'participation_start_status_id',
-    'participation_expired_confirmation_status_id'
+    'participation_expired_confirmation_status_id',
+    'participation_confirmed_status_id'
 
   EVENT_SUBJECT_PLACEHOLDER = "{%event_subject%}"
 
@@ -79,16 +81,48 @@ class EventConfiguration < ActiveRecord::Base
     return false
   end
 
+  def self.can_confirm? issue
+    EventConfiguration.issues_to_confirm(issue.project, User.current).where("issues.id = #{issue.id}").all.size > 0
+  end
+  
+  def self.confirm issue
+        @event_configuration = EventConfiguration.where(:project_id => issue.project.id).last
+        @issue = Issue.find(EventConfiguration.issues_to_confirm(issue.project, User.current).find(issue.id).id)
+        @issue.status = @event_configuration.participation_confirmed_status
+        @issue.save
+  end
+
+  def self.issues_to_confirm project, user
+      ec = EventConfiguration.where(:project_id => project.id).last
+
+      Issue.where(:tracker_id => ec.participation_tracker_id, :project_id => ec.project_id, :status_id => ec.participation_start_status_id )
+      .joins('LEFT OUTER JOIN issues father ON father.id = issues.parent_id')
+      .joins('LEFT OUTER JOIN custom_values father_custom_values ON father_custom_values.customized_id = father.id')
+      .where("father_custom_values.custom_field_id=#{ec.custom_field_require_participation_confirmation_id}")
+      .where("father_custom_values.value = '1' ")
+      .joins('LEFT OUTER JOIN custom_values ON custom_values.customized_id = issues.id')
+      .where("custom_values.custom_field_id=#{ec.custom_field_participation_confirmation_limit_id}")
+      .where("custom_values.value >= '#{DateTime.now.strftime("%F")}' OR custom_values.value = ''")
+      .where("issues.assigned_to_id = #{user.id}")
+      .where("issues.status_id = #{ec.participation_start_status_id}")
+  end
+
   def get_custom_value issue, custom_field_id
     issue.custom_values.select { |cv|
         cv.custom_field_id == custom_field_id
     }[0]
   end
 
-  def self.tracker? issue
+  def self.event_tracker? issue
     @event_configuration = EventConfiguration.where(:project_id => issue.project.id).last
     return false if @event_configuration.nil?
     return @event_configuration.event_tracker_id == issue.tracker.id;
+  end
+
+  def self.participation_tracker? issue
+    @event_configuration = EventConfiguration.where(:project_id => issue.project.id).last
+    return false if @event_configuration.nil?
+    return @event_configuration.participation_tracker_id == issue.tracker.id;
   end
 
   def get_participants issue

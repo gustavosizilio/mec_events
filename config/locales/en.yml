@@ -13,3 +13,9 @@ en:
   need_enabled_on_participation_tracker: "This field must be enabled on selected tracker for participation type"
   need_enabled_on_event_tracker: "This field must be enabled on selected tracker for event type"
   participation_start_status: "Start status of participation"
+  participation_expired_status: "Expired status of participation"
+  participation_confirmed_status: "Confirmed status of participation"
+  confirm_invitation: "Confirm Invitation"
+  update_status_fail: "Update status failed"
+  are_you_sure: "Are you sure?"
+  

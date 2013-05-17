@@ -1,0 +1,7 @@
+<% if EventConfiguration.participation_tracker? @issue %>
+    <% if (
+            EventConfiguration.can_confirm?(@issue)
+          ) %>
+      <%= link_to(l(:confirm_invitation), confirm_invitation_path(@issue.id), :method => :post, :class => 'highlight-link', :confirm => l(:are_you_sure)) if User.current.allowed_to?(:confirm_invitation, @project) %>
+    <% end %>
+<% end %>
