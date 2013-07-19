@@ -18,4 +18,12 @@ class EventsController < ApplicationController
     end
     redirect_to issue_path(@issue)
   end
+
+  def configure_daily_and_passages
+  end
+
+  def update_daily_and_passages
+    EventConfiguration.update_daily_and_passages(@issue, params)
+    redirect_to issue_path(@issue)
+  end 
 end

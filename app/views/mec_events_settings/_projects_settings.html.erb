@@ -54,6 +54,20 @@
 </p>
 <% end %>
 
+
+<p>
+  <%= label_tag('event_configuration[custom_field_require_daily_and_passages_id]', l(:custom_field_require_daily_and_passages)) %>
+  <%= select_tag 'event_configuration[custom_field_require_daily_and_passages_id]', options_from_collection_for_select(@project.issue_custom_fields.where(:field_format => "bool"), "id", "name", @event_configuration.custom_field_require_daily_and_passages_id), :include_blank => true, :onchange=>"$('#edit_event_configuration').submit()" %>
+  <br/><em><%= l(:need_enabled_on_event_tracker) %>
+</p>
+
+<% if @event_configuration.custom_field_require_daily_and_passages_id %>
+<p>
+  <%= label_tag('event_configuration[custom_field_daily_and_passages_value_id]', l(:custom_field_daily_and_passages_value)) %>
+  <%= select_tag 'event_configuration[custom_field_daily_and_passages_value_id]', options_from_collection_for_select(@project.issue_custom_fields.where(:field_format => "text"), "id", "name", @event_configuration.custom_field_daily_and_passages_value_id), :include_blank => true %>
+  <br/><em><%= l(:need_enabled_on_event_tracker) %>
+</p>
+<% end %>
 </div>
 
 <div class="contextual">

@@ -5,7 +5,9 @@ class EventConfiguration < ActiveRecord::Base
   belongs_to :participation_tracker, :class_name => Tracker
   belongs_to :custom_field_participants, :class_name => IssueCustomField
   belongs_to :custom_field_require_participation_confirmation, :class_name => IssueCustomField
+  belongs_to :custom_field_require_daily_and_passages, :class_name => IssueCustomField
   belongs_to :custom_field_participation_confirmation_limit, :class_name => IssueCustomField
+  belongs_to :custom_field_daily_and_passages_value, :class_name => IssueCustomField
   belongs_to :participation_start_status, :class_name => IssueStatus
   belongs_to :participation_expired_confirmation_status, :class_name => IssueStatus
   belongs_to :participation_confirmed_status, :class_name => IssueStatus
@@ -21,7 +23,9 @@ class EventConfiguration < ActiveRecord::Base
     'custom_field_participation_confirmation_limit_id',
     'participation_start_status_id',
     'participation_expired_confirmation_status_id',
-    'participation_confirmed_status_id'
+    'participation_confirmed_status_id',
+    'custom_field_require_daily_and_passages_id',
+    'custom_field_daily_and_passages_value_id'
 
   EVENT_SUBJECT_PLACEHOLDER = "{%event_subject%}"
 
@@ -29,6 +33,46 @@ class EventConfiguration < ActiveRecord::Base
     self.participation_subject_template.gsub EVENT_SUBJECT_PLACEHOLDER, issue.subject if self.participation_subject_template
   end
   
+  def self.update_daily_and_passages issue, params
+    @event_configuration = EventConfiguration.where(:project_id => issue.project.id).last
+    @issue = Issue.find(issue.id)
+    cv = @event_configuration.get_custom_value @issue, @event_configuration.custom_field_daily_and_passages_value_id
+
+    pjson = params
+    pjson.select! { |k, v| 
+      k == :passages.to_s || k == :request_funding_type.to_s
+    }
+    
+    pjson[:passages] = pjson[:passages].values if !pjson[:passages].nil? && !pjson[:passages].empty?
+
+    if(pjson[:request_funding_type.to_s] == :daily_only.to_s || pjson[:request_funding_type.to_s] == '')
+      pjson[:passages] = []
+    end
+
+    if cv.nil? 
+      cv = CustomValue.new
+      cv.customized_type = "Issue"
+      cv.customized_id = @issue.id
+      cv.custom_field_id = @event_configuration.custom_field_daily_and_passages_value_id
+    end
+    cv.value = pjson.to_json()
+    cv.save
+  end
+
+  def self.get_daily_and_passages_value issue, key
+     @event_configuration = EventConfiguration.where(:project_id => issue.project.id).last
+     cv = @event_configuration.get_custom_value issue, @event_configuration.custom_field_daily_and_passages_value_id
+    r = nil     
+    unless cv.nil?
+      begin
+        r = JSON.parse cv.value 
+      rescue
+        return ""
+      end
+    end
+    r[key]
+  end
+
   def self.create_participants issue, params
     @errors = []
     event_configuration = EventConfiguration.find_by_issue(issue)
@@ -157,4 +201,14 @@ class EventConfiguration < ActiveRecord::Base
       .update_all(["issues.status_id=?", ec.participation_expired_confirmation_status_id])
     end
   end
+
+  def self.request_funding_types
+    [:daily_and_passages, :daily_only, :passages_only]
+  end
+
+  def self.can_update_daily_and_passages? issue
+    ec = EventConfiguration.where(:project_id => issue.project.id).last
+    issue.status_id == ec.participation_confirmed_status_id
+  end
+
 end

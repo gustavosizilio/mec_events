@@ -1,0 +1,89 @@
+$('#ajax-modal').html('<%= escape_javascript(render :partial => 'events/configure_daily_and_passages', :locals => {:issue => @issue}) %>');
+showModal('ajax-modal', '850px');
+$('#ajax-modal').addClass('new-watcher');
+show_journey_content();
+
+//LOAD TABLE
+var values = '<%= EventConfiguration.get_daily_and_passages_value(@issue, "passages")%>'
+values = values.replace(/&quot;/g,'"').replace(/=&gt;/g,':');
+if(values.length > 0){
+  data =  $.parseJSON(values);
+} else {
+  data = [];
+}
+
+$('#request_funding_type').live("change", function(){
+  show_journey_content();
+});
+
+function show_journey_content() {
+  if($('#request_funding_type option:selected').val() != 'daily_only' && $('#request_funding_type option:selected').val() != ''){
+    $("#journey_content").show();
+  } else {
+    $("#journey_content").hide();
+  }
+}
+
+function update_daily_and_passages(){
+  $.post("<%= update_daily_and_passages_url(@issue) %>",
+          { 'request_funding_type': $('#request_funding_type option:selected').val() , 'passages': data },
+          function(data) {
+            location.reload();
+          });
+}
+
+$("#journey").handsontable({
+  data: data,
+  minSpareRows: 1,
+  contextMenu: {
+    callback: function (key, options) {
+      if (key === 'about') {
+        setTimeout(function () {
+          //timeout is used to make sure the menu collapsed before alert is shown
+          alert("This is a context menu with default and custom options mixed");
+        }, 100);
+      }
+    },
+    items: {
+      "row_above": {
+        disabled: function () {
+          //if first row, disable this option
+          return ($("#journey").handsontable('getSelected')[0] === 0);
+        }
+      },
+      "row_below": {},
+      "hsep1": "---------",
+      "remove_row": {
+        name: 'Remove this row, ok?',
+        disabled: function () {
+          //if first row, disable this option
+          return ($("#journey").handsontable('getSelected')[0] === 0);
+        }
+      }
+    }
+  },
+  colHeaders: ["<%= l(:type) %>", "<%= l(:from) %>", "<%= l(:to) %>", "<%= l(:departure_date) %>", "<%= l(:departure_time) %>", "<%= l(:arrival_date) %>", "<%= l(:arrival_time) %>", "<%= l(:stretch_info) %>"],
+  columns: [
+    {
+      data: "type",
+      type: {renderer: myAutocompleteRenderer, editor: Handsontable.AutocompleteEditor},
+      source: ["<%= l(:terrestrial) %>", "<%= l(:airfare) %>"],
+      strict: true
+    },
+    {data: "from"},
+    {data: "to"},
+    {data: "departure_date", type: 'date'},
+    {data: "departure_time", type: 'numeric'},
+    {data: "arrival_date", type: 'date'},
+    {data: "arrival_time"},
+    {data: "stretch_info"}
+  ]
+});
+
+function myAutocompleteRenderer(instance, td, row, col, prop, value, cellProperties) {
+  Handsontable.AutocompleteCell.renderer.apply(this, arguments);
+  td.style.fontStyle = 'italic';
+  td.title = 'Type to show the list of options';
+}
+
+

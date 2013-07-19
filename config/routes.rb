@@ -6,4 +6,7 @@ match 'projects/:id/event_configuration/destroy', :to => 'event_configuration#de
 match 'issues/:id/send_invitations', :to => 'events#send_invitations', :via => :post, :as => 'send_invitations'
 match 'issues/:id/confirm_invitation', :to => 'events#confirm_invitation', :via => :post, :as => 'confirm_invitation'
 get 'issues/:id/new_invitations_with_confirmation', :to => 'events#new_invitations_with_confirmation'
+get 'issues/:id/configure_daily_and_passages', :to => 'events#configure_daily_and_passages'
+match 'issues/:id/update_daily_and_passages', :to => 'events#update_daily_and_passages', :via => :post, :as => 'update_daily_and_passages'
+
 

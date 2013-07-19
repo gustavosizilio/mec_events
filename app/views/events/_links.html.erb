@@ -1,11 +1,12 @@
   <% content_for :header_tags do %>
       <%= stylesheet_link_tag 'events', :plugin => 'mec_events' %>
+      <%= stylesheet_link_tag 'jquery.handsontable.full.css', :plugin => 'mec_events' %>
+      <%= javascript_include_tag 'jquery.handsontable.full.js', :plugin => 'mec_events' %>
   <% end %>
 
 <div class="event-links">
   <%= render :partial => "events/event_tracker_links" %>
   <%= render :partial => "events/participation_tracker_links" %>
-
 </div>
 
 

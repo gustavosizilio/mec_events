@@ -1,7 +1,16 @@
 <% if EventConfiguration.participation_tracker? @issue %>
-    <% if (
-            EventConfiguration.can_confirm?(@issue)
-          ) %>
+    <% if (EventConfiguration.can_confirm?(@issue)) %>
       <%= link_to(l(:confirm_invitation), confirm_invitation_path(@issue.id), :method => :post, :class => 'highlight-link', :confirm => l(:are_you_sure)) if User.current.allowed_to?(:confirm_invitation, @project) %>
     <% end %>
+
+    <% if (EventConfiguration.can_update_daily_and_passages?(@issue)) %>
+      <%= link_to(l(:configure_daily_and_passages),
+                    {:controller => 'events', :action => 'configure_daily_and_passages', :project_id => @issue.project, :id => @issue.id},
+                    :remote => true,
+                    :method => 'get',
+                    :class => 'highlight-link',
+                    :id => 'configure_daily_and_passages_link') if User.current.allowed_to?(:configure_daily_and_passages, @project) %>
+
+    <% end %> 
+
 <% end %>

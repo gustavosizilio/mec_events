@@ -1,0 +1,25 @@
+<h3 class="title"><%= l(:configure_daily_and_passages) %></h3>
+
+<%= form_tag({:controller => 'events',
+              :action =>'update_daily_and_passages',
+              :id => issue.id,
+             :remote => false,
+             :method => :post}) do %>
+<div class="box tabular">
+  <p>
+  <%= label_tag 'request_funding_type', l(:request_funding_types) %>:
+  <%= select_tag 'request_funding_type', 
+        EventConfiguration.request_funding_types.collect { |value|
+          "<option value='#{value}' #{'selected' if EventConfiguration.get_daily_and_passages_value(issue, 'request_funding_type')==value.to_s}>#{l(value)}</option>" 
+        }.join.html_safe,
+      :include_blank => true %>
+  </p>
+</div>
+
+  <%= render :partial => "stretch_journey"%>
+  
+  <p class="buttons">
+    <%= submit_tag l(:update_daily_and_passages), :name => nil, :onclick => "update_daily_and_passages(); return false;" %>
+    <%= submit_tag l(:button_cancel), :name => nil, :onclick => "hideModal(this);", :type => 'button' %>
+  </p>
+<% end %>
